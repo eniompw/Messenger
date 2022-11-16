@@ -13,12 +13,11 @@ def create():
     con = sqlite3.connect("messenger.db")
     cur = con.cursor()
     try:
-        cur.execute("""
-        CREATE TABLE messages(
-        sender VARCHAR(20) NOT NULL,
-	    receiver VARCHAR(20) NOT NULL,
-        msg VARCHAR(20) NOT NULL)
-        """)
+        cur.execute(""" CREATE TABLE messages(
+            		sender VARCHAR(20) NOT NULL,
+	    		receiver VARCHAR(20) NOT NULL,
+            		msg VARCHAR(20) NOT NULL)
+                    """)
     except sqlite3.OperationalError as e:
         return str(e)
     return "table created"
@@ -27,9 +26,9 @@ def create():
 def insert():
 	con = sqlite3.connect('messenger.db')
 	cur = con.cursor()
-	cur.execute(	"""	INSERT INTO Users (Username, Password)
-					VALUES ("bob", "123")
-			""")
+	cur.execute("""	INSERT INTO Users (Username, Password)
+                    	VALUES ("bob", "123")
+		    """)
 	con.commit()
 	return 'INSERT'
 
@@ -38,7 +37,7 @@ def login():
     con = sqlite3.connect('messenger.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM Users WHERE Username=? AND Password=?",
-		       (request.form['un'],request.form['pw']))
+			(request.form['un'],request.form['pw']))
     result = cur.fetchall()
     if len(result) == 0:
         return 'username / password not recognised'
@@ -56,7 +55,7 @@ def send():
     con = sqlite3.connect('messenger.db')
     cur = con.cursor()
     cur.execute("INSERT INTO messages (sender, receiver, msg) VALUES (?,?,?)",
-    	       		(session['username'],request.form['to'],request.form['msg']))
+			(session['username'],request.form['to'],request.form['msg']))
     con.commit()
     return redirect(url_for('inbox'))
 

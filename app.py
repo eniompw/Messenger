@@ -71,4 +71,4 @@ def inbox():
 @app.route('/logout')
 def logout():
     session.pop('username', None)
-    return render_template('login.html')
+    return redirect(url_for('home'))

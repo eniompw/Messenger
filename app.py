@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect, url_for
 import sqlite3
 import os
 app = Flask(__name__)
@@ -45,7 +45,11 @@ def login():
     else:
         session.permanent = True
         session['username'] = request.form['un']
-        return render_template('send.html')
+        return redirect(url_for('inbox'))
+
+@app.route('/outbox')
+def outbox():
+    return render_template('send.html')
 
 @app.route('/send', methods=['POST'])
 def send():
@@ -54,7 +58,7 @@ def send():
     cur.execute("INSERT INTO messages (sender, receiver, msg) VALUES (?,?,?)",
     	       		(session['username'],request.form['to'],request.form['msg']))
     con.commit()
-    return 'msg sent'
+    return redirect(url_for('inbox'))
 
 @app.route('/inbox')
 def inbox():
@@ -62,4 +66,4 @@ def inbox():
     cur = con.cursor()
     cur.execute("SELECT * FROM messages WHERE receiver=?", (session['username'],))
     rows = cur.fetchall()
-    return ','.join(map(str, rows))
+    return render_template('inbox.html', msgs=','.join(map(str, rows)))

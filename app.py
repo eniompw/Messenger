@@ -28,7 +28,7 @@ def insert():
 	con = sqlite3.connect('messenger.db')
 	cur = con.cursor()
 	cur.execute(	"""	INSERT INTO Users (Username, Password)
-					VALUES ("tom", "123")
+					VALUES ("bob", "123")
 			""")
 	con.commit()
 	return 'INSERT'
@@ -67,3 +67,8 @@ def inbox():
     cur.execute("SELECT * FROM messages WHERE receiver=?", (session['username'],))
     rows = cur.fetchall()
     return render_template('inbox.html', msgs=rows)
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return render_template('login.html')

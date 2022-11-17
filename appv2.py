@@ -23,13 +23,13 @@ def create():
 
 @app.route('/insert')
 def insert():
-	con = sqlite3.connect('messenger.db')
-	cur = con.cursor()
-	cur.execute("""	INSERT INTO users (username, password)
+    con = sqlite3.connect('messenger.db')
+    cur = con.cursor()
+    cur.execute(""" INSERT INTO users (username, password)
                     VALUES ("bob", "123")
                 """)
-	con.commit()
-	return 'INSERT'
+    con.commit()
+    return 'INSERT'
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -45,6 +45,10 @@ def login():
         session['username'] = request.form['un']
         session['chat'] = None
         return redirect(url_for('menu'))
+
+@app.route('/menu')
+def menu():
+    return render_template('menu.html', user=session['username'])
 
 @app.route('/contacts', methods=['GET', 'POST'])
 def contacts():
@@ -78,15 +82,6 @@ def messages():
     result = [item[0] for item in cur.fetchall()]
     return render_template('msgs.html', chat=session['chat'], contacts=result)
 
-@app.route('/send', methods=['POST'])
-def send():
-    con = sqlite3.connect('messenger.db')
-    cur = con.cursor()
-    cur.execute("INSERT INTO messages (sender, receiver, msg) VALUES (?,?,?)",
-    	       		(session['username'],request.form['to'],request.form['msg']))
-    con.commit()
-    return redirect(url_for('messages'))
-
 @app.route('/getMsgs', methods=['GET'])
 def getMsgs():
     session['chat'] = request.args.get("name")
@@ -98,9 +93,14 @@ def getMsgs():
     rows = cur.fetchall()
     return rows
 
-@app.route('/menu')
-def menu():
-    return render_template('menu.html', user=session['username'])
+@app.route('/send', methods=['POST'])
+def send():
+    con = sqlite3.connect('messenger.db')
+    cur = con.cursor()
+    cur.execute("INSERT INTO messages (sender, receiver, msg) VALUES (?,?,?)",
+    	       		(session['username'],request.form['to'],request.form['msg']))
+    con.commit()
+    return redirect(url_for('messages'))
 
 @app.route('/logout')
 def logout():

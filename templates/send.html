@@ -1,5 +1,10 @@
 <form action="/send" method="post">
-    To: <input type="text" name="to"> <br>
+    <select name="to">
+      <option value="none">Choose Contact</option>
+      {% for i in contacts %}
+      <option value={{ i }}>{{ i }}</option>
+      {% endfor %}
+    </select> <br>
     Message: <input type="text" name="msg"> <br>
     <input type="submit">
 </form>

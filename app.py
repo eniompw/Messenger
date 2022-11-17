@@ -25,7 +25,7 @@ def create():
 def insert():
 	con = sqlite3.connect('messenger.db')
 	cur = con.cursor()
-	cur.execute("""	INSERT INTO Users (Username, Password)
+	cur.execute("""	INSERT INTO users (username, password)
                     VALUES ("bob", "123")
                 """)
 	con.commit()
@@ -35,7 +35,7 @@ def insert():
 def login():
     con = sqlite3.connect('messenger.db')
     cur = con.cursor()
-    cur.execute("SELECT * FROM Users WHERE Username=? AND Password=?",
+    cur.execute("SELECT * FROM users WHERE username=? AND password=?",
 		            (request.form['un'],request.form['pw']))
     result = cur.fetchall()
     if len(result) == 0:
@@ -43,34 +43,34 @@ def login():
     else:
         session.permanent = True
         session['username'] = request.form['un']
+        session['chat'] = None
         return redirect(url_for('menu'))
+
+@app.route('/contacts', methods=['GET', 'POST'])
+def contacts():
+    if request.method == 'GET':
+        return render_template('contact.html')
+    else:
+        con = sqlite3.connect('messenger.db')
+        cur = con.cursor()
+        cur.execute("SELECT * FROM users WHERE username=?",
+            (request.form['usr'],))
+        result = cur.fetchall()
+        if len(result) == 0:
+            return 'username not recognised'
+        else:
+            cur.execute("INSERT INTO contacts (user, contact) VALUES (?,?)",
+                (session['username'],request.form['usr']))
+            con.commit()
+            return 'contact added'
 
 @app.route('/outbox')
 def outbox():
     con = sqlite3.connect('messenger.db')
     cur = con.cursor()
     cur.execute("SELECT contact FROM contacts WHERE user=?", (session['username'],))
-    result = cur.fetchall()
-    return render_template('msgs.html', contacts=result[0])
-
-@app.route('/contacts')
-def contacts():
-    return render_template('contact.html')
-
-@app.route('/addcontact', methods=['POST'])
-def addcontact():
-    con = sqlite3.connect('messenger.db')
-    cur = con.cursor()
-    cur.execute("SELECT * FROM Users WHERE Username=?",
-        (request.form['usr'],))
-    result = cur.fetchall()
-    if len(result) == 0:
-        return 'username not recognised'
-    else:
-        cur.execute("INSERT INTO contacts (user, contact) VALUES (?,?)",
-            (session['username'],request.form['usr']))
-        con.commit()
-        return 'contact added'
+    result = [item[0] for item in cur.fetchall()]
+    return render_template('msgs.html', contacts=result)
 
 @app.route('/send', methods=['POST'])
 def send():
@@ -81,8 +81,9 @@ def send():
     con.commit()
     return redirect(url_for('outbox'))
 
-@app.route('/getMsgs', methods=['POST'])
+@app.route('/getMsgs', methods=['GET'])
 def getMsgs():
+    session['chat'] = request.args.get("name")
     con = sqlite3.connect('messenger.db')
     cur = con.cursor()
     cur.execute("SELECT sender, msg FROM messages WHERE receiver=? OR sender=?", (session['username'],session['username']))
@@ -91,11 +92,7 @@ def getMsgs():
 
 @app.route('/menu')
 def menu():
-    con = sqlite3.connect('messenger.db')
-    cur = con.cursor()
-    cur.execute("SELECT * FROM messages WHERE receiver=? OR sender=?", (session['username'],session['username']))
-    rows = cur.fetchall()
-    return render_template('menu.html', user=session['username'], msgs=rows)
+    return render_template('menu.html', user=session['username'])
 
 @app.route('/logout')
 def logout():

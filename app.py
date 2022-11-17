@@ -43,7 +43,7 @@ def login():
     else:
         session.permanent = True
         session['username'] = request.form['un']
-        return redirect(url_for('inbox'))
+        return redirect(url_for('menu'))
 
 @app.route('/outbox')
 def outbox():
@@ -89,15 +89,15 @@ def getMsgs():
     rows = cur.fetchall()
     return rows
 
-@app.route('/inbox')
-def inbox():
+@app.route('/menu')
+def menu():
     con = sqlite3.connect('messenger.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM messages WHERE receiver=? OR sender=?", (session['username'],session['username']))
     rows = cur.fetchall()
-    return render_template('inbox.html', user=session['username'], msgs=rows)
+    return render_template('menu.html', user=session['username'], msgs=rows)
 
 @app.route('/logout')
 def logout():
     session.pop('username', None)
-    return redirect(url_for('home'))
+    return redirect(url_for('menu'))

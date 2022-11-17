@@ -1,5 +1,7 @@
+<h1> {{ user }}'s inbox </h1>
+
 {% for i in msgs %}
-{{ "from: " + i[0] + " : " + i[2] }} <br>
+{{ i[0] + " : " + i[2] }} <br>
 {% endfor %}
 
 <p> <a href="/outbox">Send Messages</a>

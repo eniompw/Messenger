@@ -79,7 +79,15 @@ def send():
     cur.execute("INSERT INTO messages (sender, receiver, msg) VALUES (?,?,?)",
     	       		(session['username'],request.form['to'],request.form['msg']))
     con.commit()
-    return redirect(url_for('inbox'))
+    return redirect(url_for('outbox'))
+
+@app.route('/getMsgs', methods=['POST'])
+def getMsgs():
+    con = sqlite3.connect('messenger.db')
+    cur = con.cursor()
+    cur.execute("SELECT sender, msg FROM messages WHERE receiver=? OR sender=?", (session['username'],session['username']))
+    rows = cur.fetchall()
+    return rows
 
 @app.route('/inbox')
 def inbox():
@@ -87,7 +95,7 @@ def inbox():
     cur = con.cursor()
     cur.execute("SELECT * FROM messages WHERE receiver=? OR sender=?", (session['username'],session['username']))
     rows = cur.fetchall()
-    return render_template('inbox.html', user=session['username'] , msgs=rows)
+    return render_template('inbox.html', user=session['username'], msgs=rows)
 
 @app.route('/logout')
 def logout():

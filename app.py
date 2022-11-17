@@ -59,10 +59,16 @@ def contacts():
         if len(result) == 0:
             return 'username not recognised'
         else:
-            cur.execute("INSERT INTO contacts (user, contact) VALUES (?,?)",
+            cur.execute("SELECT * FROM contacts WHERE user=? and contact=?",
                 (session['username'],request.form['usr']))
-            con.commit()
-            return 'contact added'
+            result = cur.fetchall()
+            if len(result) == 0:
+                cur.execute("INSERT INTO contacts (user, contact) VALUES (?,?)",
+                    (session['username'],request.form['usr']))
+                con.commit()
+                return 'contact added'
+            else:
+                return 'contact exists'
 
 @app.route('/messages')
 def messages():

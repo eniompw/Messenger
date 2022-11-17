@@ -13,10 +13,9 @@ def create():
     con = sqlite3.connect("messenger.db")
     cur = con.cursor()
     try:
-        cur.execute(""" CREATE TABLE messages(
-            		sender VARCHAR(20) NOT NULL,
-	    		receiver VARCHAR(20) NOT NULL,
-            		msg VARCHAR(20) NOT NULL)
+        cur.execute(""" CREATE TABLE contacts(
+            user VARCHAR(20) NOT NULL,
+	        contact VARCHAR(20) NOT NULL)
                     """)
     except sqlite3.OperationalError as e:
         return str(e)
@@ -27,8 +26,8 @@ def insert():
 	con = sqlite3.connect('messenger.db')
 	cur = con.cursor()
 	cur.execute("""	INSERT INTO Users (Username, Password)
-                    	VALUES ("bob", "123")
-		    """)
+                    VALUES ("bob", "123")
+                """)
 	con.commit()
 	return 'INSERT'
 
@@ -37,7 +36,7 @@ def login():
     con = sqlite3.connect('messenger.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM Users WHERE Username=? AND Password=?",
-			(request.form['un'],request.form['pw']))
+		            (request.form['un'],request.form['pw']))
     result = cur.fetchall()
     if len(result) == 0:
         return 'username / password not recognised'
@@ -48,14 +47,37 @@ def login():
 
 @app.route('/outbox')
 def outbox():
-    return render_template('send.html')
+    con = sqlite3.connect('messenger.db')
+    cur = con.cursor()
+    cur.execute("SELECT contact FROM contacts WHERE user=?", (session['username'],))
+    result = cur.fetchall()
+    return render_template('send.html', contacts=result[0])
+
+@app.route('/contacts')
+def contacts():
+    return render_template('contact.html')
+
+@app.route('/addcontact', methods=['POST'])
+def addcontact():
+    con = sqlite3.connect('messenger.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM Users WHERE Username=?",
+        (request.form['usr'],))
+    result = cur.fetchall()
+    if len(result) == 0:
+        return 'username not recognised'
+    else:
+        cur.execute("INSERT INTO contacts (user, contact) VALUES (?,?)",
+            (session['username'],request.form['usr']))
+        con.commit()
+        return 'contact added'
 
 @app.route('/send', methods=['POST'])
 def send():
     con = sqlite3.connect('messenger.db')
     cur = con.cursor()
     cur.execute("INSERT INTO messages (sender, receiver, msg) VALUES (?,?,?)",
-			(session['username'],request.form['to'],request.form['msg']))
+    	       		(session['username'],request.form['to'],request.form['msg']))
     con.commit()
     return redirect(url_for('inbox'))
 

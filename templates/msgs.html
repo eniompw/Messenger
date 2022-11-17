@@ -1,8 +1,13 @@
+<body onload="getMsgs('{{ chat }}')">
 <form action="/send" method="post">
   <select name="to" id="contact" onchange="getMsgs(this.value)">
       <option value="none">Choose Contact</option>
       {% for i in contacts %}
-      <option value={{ i }}>{{ i }}</option>
+        <option
+          {% if i == chat %}
+            selected="selected"
+          {% endif %}
+        value={{ i }}>{{ i }}</option>
       {% endfor %}
   </select> <p>
   Message: <input type="text" name="msg"> <br>
@@ -30,3 +35,4 @@ function getMsgs(name) {
   }
 }
 </script>
+</body>

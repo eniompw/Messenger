@@ -64,13 +64,13 @@ def contacts():
             con.commit()
             return 'contact added'
 
-@app.route('/outbox')
-def outbox():
+@app.route('/messages')
+def messages():
     con = sqlite3.connect('messenger.db')
     cur = con.cursor()
     cur.execute("SELECT contact FROM contacts WHERE user=?", (session['username'],))
     result = [item[0] for item in cur.fetchall()]
-    return render_template('msgs.html', contacts=result)
+    return render_template('msgs.html', chat=session['chat'], contacts=result)
 
 @app.route('/send', methods=['POST'])
 def send():
@@ -79,14 +79,16 @@ def send():
     cur.execute("INSERT INTO messages (sender, receiver, msg) VALUES (?,?,?)",
     	       		(session['username'],request.form['to'],request.form['msg']))
     con.commit()
-    return redirect(url_for('outbox'))
+    return redirect(url_for('messages'))
 
 @app.route('/getMsgs', methods=['GET'])
 def getMsgs():
     session['chat'] = request.args.get("name")
     con = sqlite3.connect('messenger.db')
     cur = con.cursor()
-    cur.execute("SELECT sender, msg FROM messages WHERE receiver=? OR sender=?", (session['username'],session['username']))
+    usr = session['username']
+    chat = session['chat']
+    cur.execute("""SELECT sender, msg FROM messages WHERE (receiver=? AND sender=?) OR (receiver=? AND sender=?)""", (usr,chat,chat,usr))
     rows = cur.fetchall()
     return rows
 
@@ -97,4 +99,4 @@ def menu():
 @app.route('/logout')
 def logout():
     session.pop('username', None)
-    return redirect(url_for('menu'))
+    return redirect(url_for('home'))

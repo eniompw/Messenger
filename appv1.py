@@ -24,13 +24,13 @@ def create():
 
 @app.route('/insert')
 def insert():
-	con = sqlite3.connect('messenger.db')
-	cur = con.cursor()
-	cur.execute("""	INSERT INTO Users (Username, Password)
-                    	VALUES ("bob", "123")
-		    """)
-	con.commit()
-	return 'INSERT'
+    con = sqlite3.connect('messenger.db')
+    cur = con.cursor()
+    cur.execute(""" INSERT INTO users (username, password)
+                    VALUES ("bob", "123")
+                """)
+    con.commit()
+    return 'INSERT'
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -46,6 +46,14 @@ def login():
         session['username'] = request.form['un']
         return redirect(url_for('inbox'))
 
+@app.route('/inbox')
+def inbox():
+    con = sqlite3.connect('messenger.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM messages WHERE receiver=? OR sender=?", (session['username'],session['username']))
+    rows = cur.fetchall()
+    return render_template('inbox.html', user=session['username'] , msgs=rows)
+
 @app.route('/outbox')
 def outbox():
     return render_template('send.html')
@@ -58,14 +66,6 @@ def send():
 			(session['username'],request.form['to'],request.form['msg']))
     con.commit()
     return redirect(url_for('inbox'))
-
-@app.route('/inbox')
-def inbox():
-    con = sqlite3.connect('messenger.db')
-    cur = con.cursor()
-    cur.execute("SELECT * FROM messages WHERE receiver=? OR sender=?", (session['username'],session['username']))
-    rows = cur.fetchall()
-    return render_template('inbox.html', user=session['username'] , msgs=rows)
 
 @app.route('/logout')
 def logout():

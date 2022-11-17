@@ -14,10 +14,9 @@
 
 <script>
 function getMsgs(name) {
-  console.log(name)
   var xhttp = new XMLHttpRequest()
-  xhttp.open("POST", "/getMsgs", true)
-  xhttp.send(name)
+  xhttp.open("GET", "/getMsgs?name="+name, true)
+  xhttp.send()
 
   xhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {

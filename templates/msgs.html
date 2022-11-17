@@ -1,0 +1,33 @@
+<form action="/send" method="post">
+  <select name="to" id="contact" onchange="getMsgs(this.value)">
+      <option value="none">Choose Contact</option>
+      {% for i in contacts %}
+      <option value={{ i }}>{{ i }}</option>
+      {% endfor %}
+  </select> <p>
+  Message: <input type="text" name="msg"> <br>
+  <input type="submit">
+</form>
+
+<div id="msgs">
+</div>
+
+<script>
+function getMsgs(name) {
+  console.log(name)
+  var xhttp = new XMLHttpRequest()
+  xhttp.open("POST", "/getMsgs", true)
+  xhttp.send(name)
+
+  xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+          const msgs = JSON.parse(this.responseText);
+          let output = "";
+          for (let i = 0; i < msgs.length; i++) {
+              output += msgs[i][0] + " : " + msgs[i][1] + "<br>";
+          }
+      document.getElementById("msgs").innerHTML = output
+      }
+  }
+}
+</script>

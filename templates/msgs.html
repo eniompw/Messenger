@@ -1,6 +1,6 @@
 <body onload="getMsgs('{{ chat }}')">
 <form action="/send" method="post">
-  <select name="to" id="contact" onchange="getMsgs(this.value)">
+  <select name="to" onchange="getMsgs(this.value)">
       <option value="none">Choose Contact</option>
       {% for i in contacts %}
         <option

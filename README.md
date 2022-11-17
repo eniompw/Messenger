@@ -9,5 +9,6 @@ simple python flask based messaging app
 * [outbox](https://github.com/eniompw/messenger/blob/main/templates/send.html)
 
 [app v2](https://github.com/eniompw/messenger/blob/main/appv2.py)
+* [menu](https://github.com/eniompw/messenger/blob/main/templates/menu.html)
 * [contacts](https://github.com/eniompw/messenger/blob/main/templates/contact.html)
 * [messages](https://github.com/eniompw/messenger/blob/main/templates/msgs.html)

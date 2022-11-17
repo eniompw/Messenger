@@ -51,7 +51,7 @@ def outbox():
     cur = con.cursor()
     cur.execute("SELECT contact FROM contacts WHERE user=?", (session['username'],))
     result = cur.fetchall()
-    return render_template('send.html', contacts=result[0])
+    return render_template('msgs.html', contacts=result[0])
 
 @app.route('/contacts')
 def contacts():

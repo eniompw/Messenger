@@ -63,9 +63,9 @@ def send():
 def inbox():
     con = sqlite3.connect('messenger.db')
     cur = con.cursor()
-    cur.execute("SELECT * FROM messages WHERE receiver=?", (session['username'],))
+    cur.execute("SELECT * FROM messages WHERE receiver=? OR sender=?", (session['username'],session['username']))
     rows = cur.fetchall()
-    return render_template('inbox.html', msgs=rows)
+    return render_template('inbox.html', user=session['username'] , msgs=rows)
 
 @app.route('/logout')
 def logout():

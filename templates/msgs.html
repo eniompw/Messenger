@@ -1,14 +1,15 @@
 <body onload="getMsgs('{{ chat }}')">
 <form action="/send" method="post">
   <select name="to" onchange="getMsgs(this.value)">
-      <option value="none">Choose Contact</option>
-      {% for i in contacts %}
-        <option
-          {% if i == chat %}
-            selected="selected"
-          {% endif %}
-        value={{ i }}>{{ i }}</option>
-      {% endfor %}
+    <option value="none">Choose Contact</option>
+    {% for i in contacts %}
+      <option
+      {% if i == chat %}
+        selected="selected"
+      {% endif %}
+      value={{ i }}>{{ i }}
+      </option>
+    {% endfor %}
   </select> <p>
   Message: <input type="text" name="msg"> <br>
   <input type="submit">
@@ -23,13 +24,13 @@ function getMsgs(name) {
   xhttp.send()
 
   xhttp.onload = function() {
-          const msgs = JSON.parse(this.responseText);
-          let output = "";
-          for (let i = 0; i < msgs.length; i++) {
-              output += msgs[i][0] + " : " + msgs[i][1] + "<br>";
-          }
-      document.getElementById("msgs").innerHTML = output
-      }
+    const msgs = JSON.parse(this.responseText);
+    let output = "";
+    for (let i = 0; i < msgs.length; i++) {
+      output += msgs[i][0] + " : " + msgs[i][1] + "<br>";
+    }
+    document.getElementById("msgs").innerHTML = output
+  }
 }
 </script>
 </body>

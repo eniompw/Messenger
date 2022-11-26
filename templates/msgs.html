@@ -14,17 +14,15 @@
   <input type="submit">
 </form>
 
-<div id="msgs">
-</div>
+<div id="msgs"></div>
 
 <script>
 function getMsgs(name) {
-  var xhttp = new XMLHttpRequest()
+  const xhttp = new XMLHttpRequest();
   xhttp.open("GET", "/getMsgs?name="+name, true)
   xhttp.send()
 
-  xhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
+  xhttp.onload = function() {
           const msgs = JSON.parse(this.responseText);
           let output = "";
           for (let i = 0; i < msgs.length; i++) {
@@ -32,7 +30,6 @@ function getMsgs(name) {
           }
       document.getElementById("msgs").innerHTML = output
       }
-  }
 }
 </script>
 </body>

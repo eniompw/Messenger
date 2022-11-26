@@ -16,3 +16,4 @@ simple python flask based messaging app
 
 ## ref:
 * [AJAX example](https://www.w3schools.com/js/js_ajax_intro.asp)
+* [Jinja](https://jinja.palletsprojects.com/en/3.0.x/templates)

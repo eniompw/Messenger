@@ -13,6 +13,7 @@ simple python flask based messaging app
 * [menu](https://github.com/eniompw/messenger/blob/main/templates/menu.html)
 * [contacts](https://github.com/eniompw/messenger/blob/main/templates/contact.html)
 * [messages](https://github.com/eniompw/messenger/blob/main/templates/msgs.html)
+* [msg alignment](https://github.com/eniompw/Messenger/blob/main/templates/align.html)
 
 ## ref:
 * [AJAX example](https://www.w3schools.com/js/js_ajax_intro.asp)

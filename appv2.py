@@ -102,6 +102,18 @@ def send():
     con.commit()
     return redirect(url_for('messages'))
 
+import random
+@app.route('/align')
+def align():
+    msg = []
+    for i in range(10):
+        if random.randint(0,1) == 0:
+            msg.append("left")
+        else:
+            msg.append("right")
+    print(msg)
+    return render_template('index.html', msg=msg)])
+
 @app.route('/logout')
 def logout():
     session.pop('username', None)

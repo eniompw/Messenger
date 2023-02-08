@@ -112,7 +112,7 @@ def align():
         else:
             msg.append("right")
     print(msg)
-    return render_template('index.html', msg=msg)])
+    return render_template('align.html', msg=msg)])
 
 @app.route('/logout')
 def logout():
